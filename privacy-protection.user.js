@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         隐私保护脚本
+// @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
 // @version      0.6
-// @description  给包含特定敏感内容的元素添加模糊效果，并提供开关按钮控制，支持点击网页时自动应用隐私保护效果多次，点击恢复后恢复正常状态
-// @author       You
+// @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
+// @author       ndxzzy,ChatGPT
 // @match        *://app.rainyun.com/*
 // @grant        none
 // ==/UserScript==

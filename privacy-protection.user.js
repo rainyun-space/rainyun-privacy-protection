@@ -1,30 +1,17 @@
 // ==UserScript==
 // @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.10
+// @version      0.11
 // @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
 // @author       ndxzzy,ChatGPT
 // @match        *://app.rainyun.com/*
-// @grant        none
 // @updateURL    https://github.com/rainyun-space/privacy-protection/raw/main/privacy-protection.user.js
 // @downloadURL  https://github.com/rainyun-space/privacy-protection/raw/main/privacy-protection.user.js
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
 (function() {
     'use strict';
-
-    var toggleButton = document.createElement('button');
-    toggleButton.innerHTML = '打码';
-    toggleButton.style.position = 'fixed';
-    toggleButton.style.left = '10px';
-    toggleButton.style.bottom = '10px';
-    toggleButton.style.padding = '5px';
-    toggleButton.style.backgroundColor = '#007bff';
-    toggleButton.style.color = '#fff';
-    toggleButton.style.border = 'none';
-    toggleButton.style.borderRadius = '3px';
-    toggleButton.style.cursor = 'pointer';
-    document.body.appendChild(toggleButton);
 
     var privacyProtectionEnabled = false;
     var clickListenerEnabled = false;
@@ -32,13 +19,12 @@
     function togglePrivacyProtection() {
         privacyProtectionEnabled = !privacyProtectionEnabled;
         if (privacyProtectionEnabled) {
-            toggleButton.innerHTML = '恢复';
+            applyPrivacyProtection();
             if (!clickListenerEnabled) {
                 document.addEventListener('click', handleClick);
                 clickListenerEnabled = true;
             }
         } else {
-            toggleButton.innerHTML = '打码';
             removePrivacyProtection();
             if (clickListenerEnabled) {
                 document.removeEventListener('click', handleClick);
@@ -47,7 +33,7 @@
         }
     }
 
-    toggleButton.addEventListener('click', togglePrivacyProtection);
+    GM_registerMenuCommand('切换隐私保护', togglePrivacyProtection);
 
     function handleClick() {
         if (privacyProtectionEnabled) {

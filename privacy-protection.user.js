@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.10
 // @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
 // @author       ndxzzy,ChatGPT
 // @match        *://app.rainyun.com/*
@@ -69,6 +69,8 @@
         var h4Elements = document.querySelectorAll('h4');
         h4Elements.forEach(h4Element => {
             if (h4Element.textContent.includes('公网IP列表') ||
+                h4Element.textContent.includes('面板用户名') ||
+                h4Element.textContent.includes('CDN设置') ||
                 h4Element.textContent.includes('发票抬头列表') ||
                 h4Element.textContent.includes('我的发票') ||
                 h4Element.textContent.includes('发起提现') ||

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.11
+// @version      0.12
 // @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
 // @author       ndxzzy,ChatGPT
 // @match        *://app.rainyun.com/*
@@ -14,44 +14,33 @@
     'use strict';
 
     var privacyProtectionEnabled = false;
-    var clickListenerEnabled = false;
 
     function togglePrivacyProtection() {
         privacyProtectionEnabled = !privacyProtectionEnabled;
         if (privacyProtectionEnabled) {
             applyPrivacyProtection();
-            if (!clickListenerEnabled) {
-                document.addEventListener('click', handleClick);
-                clickListenerEnabled = true;
-            }
         } else {
             removePrivacyProtection();
-            if (clickListenerEnabled) {
-                document.removeEventListener('click', handleClick);
-                clickListenerEnabled = false;
-            }
         }
     }
 
     GM_registerMenuCommand('切换隐私保护', togglePrivacyProtection);
 
-    function handleClick() {
-        if (privacyProtectionEnabled) {
-            applyPrivacyProtectionMultipleTimes();
-        }
-    }
+    // 监听页面变化，持续应用隐私保护效果
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (privacyProtectionEnabled) {
+                applyPrivacyProtection();
+            }
+        });
+    });
 
-    function applyPrivacyProtectionMultipleTimes() {
-        var delay = 100;
-        for (var i = 0; i < 20; i++) {
-            setTimeout(applyPrivacyProtection, delay * (i + 1));
-        }
-    }
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
     function applyPrivacyProtection() {
-        if (!privacyProtectionEnabled) {
-            return;
-        }
         var h4Elements = document.querySelectorAll('h4');
         h4Elements.forEach(h4Element => {
             if (h4Element.textContent.includes('公网IP列表') ||
@@ -64,10 +53,21 @@
                 h4Element.textContent.includes(' 我的模板') ||
                 h4Element.textContent.includes(' 域名管理') ||
                 h4Element.textContent.includes('NAT端口映射管理') ||
+                h4Element.textContent.includes('Nat端口映射') ||
                 h4Element.textContent.includes('绑定支付宝') ||
                 h4Element.textContent.includes('绑定邮箱') ||
+                h4Element.textContent.includes('账号变动日志') ||
                 h4Element.textContent.includes('API秘钥')) {
                 var divParent = h4Element.parentNode;
+                if (divParent.tagName === 'DIV') {
+                    divParent.style.filter = 'blur(5px)';
+                }
+            }
+        });
+        var tableElements = document.querySelectorAll('table');
+        tableElements.forEach(tableElement => {
+            if (tableElement.textContent.includes('日志ID')) {
+                var divParent = tableElement.parentNode;
                 if (divParent.tagName === 'DIV') {
                     divParent.style.filter = 'blur(5px)';
                 }
@@ -83,6 +83,8 @@
                 }
             } else if (element.tagName === 'TD') {
                 if (element.querySelector('small') && element.querySelector('small').textContent.includes('公网 IP 地址：')) {
+                    element.style.filter = 'blur(5px)';
+                } else if (element.querySelector('small') && element.querySelector('small').textContent.includes('远程连接地址 (RDP/SSH)：')) {
                     element.style.filter = 'blur(5px)';
                 } else if (element.querySelector('small') && element.querySelector('small').textContent.includes('面板主账户：')) {
                     element.style.filter = 'blur(5px)';

@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.12
+// @version      0.13
 // @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
 // @author       ndxzzy,ChatGPT
 // @match        *://app.rainyun.com/*
-// @updateURL    https://github.com/rainyun-space/privacy-protection/raw/main/privacy-protection.user.js
-// @downloadURL  https://github.com/rainyun-space/privacy-protection/raw/main/privacy-protection.user.js
+// @updateURL    https://github.com/rainyun-space/rainyun-privacy-protection/raw/main/privacy-protection.user.js
+// @downloadURL  https://github.com/rainyun-space/rainyun-privacy-protection/raw/main/privacy-protection.user.js
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
 
@@ -83,6 +83,8 @@
                 }
             } else if (element.tagName === 'TD') {
                 if (element.querySelector('small') && element.querySelector('small').textContent.includes('公网 IP 地址：')) {
+                    element.style.filter = 'blur(5px)';
+                } else if (element.querySelector('small') && element.querySelector('small').textContent.includes('内网IP：')) {
                     element.style.filter = 'blur(5px)';
                 } else if (element.querySelector('small') && element.querySelector('small').textContent.includes('远程连接地址 (RDP/SSH)：')) {
                     element.style.filter = 'blur(5px)';

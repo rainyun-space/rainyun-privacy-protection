@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         雨云截图隐私保护脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.15
+// @version      0.16
 // @description  给包含特定隐私内容的元素添加模糊效果，并提供开关按钮控制
 // @author       ndxzzy, ChatGPT
 // @match        *://app.rainyun.com/*
@@ -22,7 +22,11 @@
         '账号变动日志', 'API秘钥', 'IP列表'
     ];
 
-    const keywordsForTable = ['日志ID', 'CNAME', '桶名'];
+    const keywordsForH5 = [
+        'IP 地址管理'
+    ];
+
+    const keywordsForTable = ['日志ID', 'CNAME', '桶名', '服务名称'];
 
     const keywordsForP = ['公网IP', '服务器ID', '标签'];
 
@@ -145,6 +149,16 @@
         h4Elements.forEach(h4Element => {
             if (keywordsForH4.some(keyword => h4Element.textContent.includes(keyword))) {
                 var divParent = h4Element.parentNode;
+                if (divParent.tagName === 'DIV') {
+                    divParent.style.filter = 'blur(5px)';
+                }
+            }
+        });
+
+        var h5Elements = document.querySelectorAll('h5');
+        h5Elements.forEach(h5Element => {
+            if (keywordsForH5.some(keyword => h5Element.textContent.includes(keyword))) {
+                var divParent = h5Element.parentNode;
                 if (divParent.tagName === 'DIV') {
                     divParent.style.filter = 'blur(5px)';
                 }
